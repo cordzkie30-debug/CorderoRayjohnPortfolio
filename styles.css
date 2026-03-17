@@ -794,6 +794,7 @@ body[data-theme="light"] .btn-outline-light {
   .profile-card {
     min-height: auto;
     padding: 1.4rem 1.2rem;
+    flex-direction: column;
   }
 
   .profile-image {
@@ -807,6 +808,7 @@ body[data-theme="light"] .btn-outline-light {
   .badge-three {
     position: static;
     margin-top: 1rem;
+    align-self: center;
   }
 
   .hero-visual {
@@ -896,7 +898,8 @@ body[data-theme="light"] .btn-outline-light {
   }
 
   .floating-badge {
-    width: 100%;
+    width: min(100%, 240px);
+    margin-inline: auto;
     justify-content: center;
     text-align: center;
   }
