@@ -5,6 +5,11 @@ const successAlert = document.querySelector(".form-alert-success");
 const errorAlert = document.querySelector(".form-alert-error");
 const themeToggle = document.querySelector("#themeToggle");
 const body = document.body;
+const lightboxTriggers = document.querySelectorAll(".lightbox-trigger");
+const lightboxModal = document.querySelector("#imageLightbox");
+const lightboxImage = document.querySelector("#lightboxImage");
+const lightboxClose = document.querySelector("#lightboxClose");
+const lightboxBackdrop = document.querySelector("#lightboxBackdrop");
 
 const getPreferredTheme = () => {
   const savedTheme = window.localStorage.getItem("theme");
@@ -35,6 +40,29 @@ const updateNavbarState = () => {
   navbar.classList.toggle("scrolled", window.scrollY > 20);
 };
 
+const openLightbox = (trigger) => {
+  if (!lightboxModal || !lightboxImage || !trigger) return;
+
+  const imageSrc = trigger.getAttribute("data-lightbox-image") || trigger.getAttribute("src");
+  const imageAlt = trigger.getAttribute("data-lightbox-alt") || trigger.getAttribute("alt") || "";
+
+  lightboxImage.setAttribute("src", imageSrc);
+  lightboxImage.setAttribute("alt", imageAlt);
+  lightboxModal.classList.add("is-open");
+  lightboxModal.setAttribute("aria-hidden", "false");
+  body.style.overflow = "hidden";
+};
+
+const closeLightbox = () => {
+  if (!lightboxModal || !lightboxImage) return;
+
+  lightboxModal.classList.remove("is-open");
+  lightboxModal.setAttribute("aria-hidden", "true");
+  lightboxImage.setAttribute("src", "");
+  lightboxImage.setAttribute("alt", "");
+  body.style.overflow = "";
+};
+
 applyTheme(getPreferredTheme());
 
 if (themeToggle) {
@@ -44,6 +72,25 @@ if (themeToggle) {
     window.localStorage.setItem("theme", nextTheme);
   });
 }
+
+lightboxTriggers.forEach((trigger) => {
+  trigger.addEventListener("click", () => openLightbox(trigger));
+  trigger.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openLightbox(trigger);
+    }
+  });
+});
+
+lightboxClose?.addEventListener("click", closeLightbox);
+lightboxBackdrop?.addEventListener("click", closeLightbox);
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && lightboxModal?.classList.contains("is-open")) {
+    closeLightbox();
+  }
+});
 
 const revealObserver = new IntersectionObserver(
   (entries) => {
